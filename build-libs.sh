@@ -17,7 +17,7 @@ echo '==============================='
 echo '============ E-XML ============'
 echo '==============================='
 cd src/e-xml/Release
-#make clean
+make clean
 make all
 cd ../../../
 
@@ -26,7 +26,7 @@ echo '=================================='
 echo '============ E-LOADER ============'
 echo '=================================='
 cd src/e-loader/Release
-#make clean
+make clean
 make all
 cd ../../../
 
@@ -35,7 +35,7 @@ echo '==============================='
 echo '============ E-HAL ============'
 echo '==============================='
 cd src/e-hal/Release
-#make clean
+make clean
 make all
 cp -f libe-hal.so ../../../bsps/${BSP}
 cd ../../../
@@ -45,7 +45,7 @@ echo '=================================='
 echo '============ E-SERVER ============'
 echo '=================================='
 cd src/e-server/Release
-#make clean
+make clean
 make all
 cd ../../../
 
@@ -61,7 +61,7 @@ echo '==============================='
 echo '============ E-LIB ============'
 echo '==============================='
 cd src/e-lib/Release
-#make clean
+make clean
 make all
 cd ../../../
 

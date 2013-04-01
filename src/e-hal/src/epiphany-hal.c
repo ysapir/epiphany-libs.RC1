@@ -78,7 +78,7 @@ int e_init(char *hdf)
 	if (UID != 0)
 	{
 		warnx("e_init(): Program must be invoked with superuser privilege (sudo).");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	// Parse HDF, get platform configuration
@@ -89,7 +89,7 @@ int e_init(char *hdf)
 		if (hdf_env == NULL)
 		{
 			warnx("e_init(): No Hardware Definition File (HDF) is specified.");
-			return EPI_ERR;
+			return E_ERR;
 		}
 		hdf = hdf_env;
 	}
@@ -98,7 +98,7 @@ int e_init(char *hdf)
 	if (ee_parse_hdf(&e_platform, hdf))
 	{
 		warnx("e_init(): Error parsing Hardware Definition File (HDF).");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	// Populate the missing chip parameters according to chip version.
@@ -134,7 +134,7 @@ int e_init(char *hdf)
 
 	e_platform.initialized = e_true;
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -144,7 +144,7 @@ int e_finalize()
 	if (e_platform.initialized == e_false)
 	{
 		warnx("e_finalize(): Platform was not initiated.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	e_platform.initialized = e_false;
@@ -152,7 +152,7 @@ int e_finalize()
 	free(e_platform.chip);
 	free(e_platform.emem);
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -161,14 +161,14 @@ int e_get_platform_info(e_platform_t *platform)
 	if (e_platform.initialized == e_false)
 	{
 		warnx("e_get_platform_info(): Platform was not initialized. Use e_init().");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	*platform = e_platform;
 	platform->chip = NULL;
 	platform->emem = NULL;
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -183,7 +183,7 @@ int e_open(e_epiphany_t *dev, unsigned row, unsigned col, unsigned rows, unsigne
 	if (e_platform.initialized == e_false)
 	{
 		warnx("e_open(): Platform was not initialized. Use e_init().");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	dev->objtype = E_EPI_GROUP;
@@ -205,7 +205,7 @@ int e_open(e_epiphany_t *dev, unsigned row, unsigned col, unsigned rows, unsigne
 	if (dev->memfd == 0)
 	{
 		warnx("e_open(): /dev/mem file open failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 
@@ -214,7 +214,7 @@ int e_open(e_epiphany_t *dev, unsigned row, unsigned col, unsigned rows, unsigne
 	if (!dev->core)
 	{
 		warnx("e_open(): Error while allocating eCore descriptors.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	for (irow=0; irow<dev->rows; irow++)
@@ -223,7 +223,7 @@ int e_open(e_epiphany_t *dev, unsigned row, unsigned col, unsigned rows, unsigne
 		if (!dev->core[irow])
 		{
 			warnx("e_open(): Error while allocating eCore descriptors.");
-			return EPI_ERR;
+			return E_ERR;
 		}
 
 		for (icol=0; icol<dev->cols; icol++)
@@ -262,12 +262,12 @@ int e_open(e_epiphany_t *dev, unsigned row, unsigned col, unsigned rows, unsigne
 			if ((curr_core->mems.mapped_base == MAP_FAILED) || (curr_core->regs.mapped_base == MAP_FAILED))
 			{
 				warnx("e_open(): ECORE[%d,%d] MEM or REG mmap failure.", curr_core->row, curr_core->col);
-				return EPI_ERR;
+				return E_ERR;
 			}
 		}
 	}
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -280,7 +280,7 @@ int e_close(e_epiphany_t *dev)
 	if (!dev)
 	{
 		warnx("e_close(): Core group was not opened.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	for (irow=0; irow<dev->rows; irow++)
@@ -300,7 +300,7 @@ int e_close(e_epiphany_t *dev)
 
 	close(dev->memfd);
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -333,7 +333,7 @@ ssize_t e_read(void *dev, unsigned row, unsigned col, off_t from_addr, void *buf
 	default:
 		diag(H_D2) { fprintf(fd, "e_read(): invalid object type.\n"); }
 		rcount = 0;
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	return rcount;
@@ -371,7 +371,7 @@ ssize_t e_write(void *dev, unsigned row, unsigned col, off_t to_addr, const void
 	default:
 		diag(H_D2) { fprintf(fd, "e_write(): invalid object type.\n"); }
 		wcount = 0;
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	return wcount;
@@ -501,7 +501,7 @@ int e_alloc(e_mem_t *mbuf, off_t base, size_t size)
 	if (e_platform.initialized == e_false)
 	{
 		warnx("e_open(): Platform was not initialized. Use e_init().");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	mbuf->objtype = E_EXT_MEM;
@@ -510,7 +510,7 @@ int e_alloc(e_mem_t *mbuf, off_t base, size_t size)
 	if (mbuf->memfd == 0)
 	{
 		warnx("e_alloc(): /dev/mem file open failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	diag(H_D2) { fprintf(fd, "e_alloc(): allocating EMEM buffer at offset 0x%08x\n", (uint) base); }
@@ -531,11 +531,11 @@ int e_alloc(e_mem_t *mbuf, off_t base, size_t size)
 	if (mbuf->mapped_base == MAP_FAILED)
 	{
 		warnx("e_alloc(): mmap failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -545,7 +545,7 @@ int e_free(e_mem_t *mbuf)
 	munmap(mbuf->mapped_base, mbuf->map_size);
 	close(mbuf->memfd);
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -640,7 +640,7 @@ int ee_read_esys(off_t from_addr)
 	if (memfd == 0)
 	{
 		warnx("ee_read_esys(): /dev/mem file open failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	esys.map_size = 0x1000; // map 4KB page
@@ -655,7 +655,7 @@ int ee_read_esys(off_t from_addr)
 	if (esys.mapped_base == MAP_FAILED)
 	{
 		warnx("ee_read_esys(): ESYS mmap failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	pfrom = (int *) (esys.base + (from_addr & esys.map_mask));
@@ -681,7 +681,7 @@ ssize_t ee_write_esys(off_t to_addr, int data)
 	if (memfd == 0)
 	{
 		warnx("ee_write_esys(): /dev/mem file open failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	esys.map_size = 0x1000; // map 4KB page
@@ -696,7 +696,7 @@ ssize_t ee_write_esys(off_t to_addr, int data)
 	if (esys.mapped_base == MAP_FAILED)
 	{
 		warnx("ee_write_esys(): ESYS mmap failure.");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	pto = (int *) (esys.base + (to_addr & esys.map_mask));
@@ -718,11 +718,11 @@ ssize_t ee_write_esys(off_t to_addr, int data)
 int e_reset_system()
 {
 	diag(H_D1) { fprintf(fd, "e_reset_system(): resetting full ESYS...\n"); }
-	ee_write_esys(e_platform.regs_base + ESYS_RESET, 0);
+	ee_write_esys(e_platform.regs_base + E_SYS_RESET, 0);
 	sleep(1);
 	diag(H_D1) { fprintf(fd, "e_reset_system(): done.\n"); }
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -733,11 +733,11 @@ int e_reset_core(e_epiphany_t *dev, unsigned row, unsigned col)
 	int RESET1 = 0x1;
 
 	diag(H_D1) { fprintf(fd, "e_reset_core(): resetting core (%d,%d) (0x%03x)...\n", row, col, dev->core[row][col].id); }
-	ee_write_reg(dev, row, col, EPI_CORE_RESET, RESET1);
-	ee_write_reg(dev, row, col, EPI_CORE_RESET, RESET0);
+	ee_write_reg(dev, row, col, E_CORE_RESET, RESET1);
+	ee_write_reg(dev, row, col, E_CORE_RESET, RESET0);
 	diag(H_D1) { fprintf(fd, "e_reset_core(): done.\n"); }
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -746,11 +746,11 @@ int e_start(e_epiphany_t *dev, unsigned row, unsigned col)
 {
 	int  SYNC = (1 << E_SYNC);
 
-	diag(H_D1) { fprintf(fd, "e_start(): SYNC (0x%x) to core (%d,%d)...\n", EPI_ILATST, row, col); }
-	ee_write_reg(dev, row, col, EPI_ILATST, SYNC);
+	diag(H_D1) { fprintf(fd, "e_start(): SYNC (0x%x) to core (%d,%d)...\n", E_ILATST, row, col); }
+	ee_write_reg(dev, row, col, E_ILATST, SYNC);
 	diag(H_D1) { fprintf(fd, "e_start(): done.\n"); }
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -759,11 +759,11 @@ int e_signal(e_epiphany_t *dev, unsigned row, unsigned col)
 {
 	int  SWI = (1 << E_SW_INT);
 
-	diag(H_D1) { fprintf(fd, "e_signal(): SWI (0x%x) to core (%d,%d)...\n", EPI_ILATST, row, col); }
-	ee_write_reg(dev, row, col, EPI_ILATST, SWI);
+	diag(H_D1) { fprintf(fd, "e_signal(): SWI (0x%x) to core (%d,%d)...\n", E_ILATST, row, col); }
+	ee_write_reg(dev, row, col, E_ILATST, SWI);
 	diag(H_D1) { fprintf(fd, "e_signal(): done.\n"); }
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -772,7 +772,7 @@ int e_halt(e_epiphany_t *dev, unsigned row, unsigned col)
 {
 	warnx("e_halt(): this function is not yet implemented.\n");
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -781,7 +781,7 @@ int e_resume(e_epiphany_t *dev, unsigned row, unsigned col)
 {
 	warnx("e_resume(): this function is not yet implemented.\n");
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -916,7 +916,7 @@ void e_set_host_verbosity(e_hal_diag_t verbose)
 
 int ee_parse_hdf(e_platform_t *dev, char *hdf)
 {
-	int   ret = EPI_ERR;
+	int   ret = E_ERR;
 	char *ext;
 
 	if (strlen(hdf) >= 4)
@@ -927,9 +927,9 @@ int ee_parse_hdf(e_platform_t *dev, char *hdf)
 		else if (!strcmp(ext, ".xml"))
 			ret = ee_parse_xml_hdf(dev, hdf);
 		else
-			ret = EPI_ERR;
+			ret = E_ERR;
 	} else {
-		ret = EPI_ERR;
+		ret = E_ERR;
 	}
 
 	return ret;
@@ -950,7 +950,7 @@ int ee_parse_simple_hdf(e_platform_t *dev, char *hdf)
 	if (fp == NULL)
 	{
 		warnx("ee_parse_simple_hdf(): Can't open Hardware Definition File (HDF) %s.", hdf);
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	chip_num = -1;
@@ -1065,13 +1065,13 @@ int ee_parse_simple_hdf(e_platform_t *dev, char *hdf)
 			diag(H_D3) { fprintf(fd, "ee_parse_simple_hdf(): comment\n"); }
 		}
 		else {
-			return EPI_ERR;
+			return E_ERR;
 		}
 	}
 
 	fclose(fp);
 
-	return EPI_OK;
+	return E_OK;
 }
 
 
@@ -1079,7 +1079,7 @@ int ee_parse_xml_hdf(e_platform_t *dev, char *hdf)
 {
 	warnx("e_init(): XML file format is not yet supported. Please use simple HDF format.");
 
-	return EPI_ERR;
+	return E_ERR;
 }
 
 
@@ -1132,7 +1132,7 @@ int ee_set_chip_params(e_chip_t *dev)
 			break;
 		}
 
-	return EPI_OK;
+	return E_OK;
 }
 
 

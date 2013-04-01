@@ -54,7 +54,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 	e_bool_t insection;
 	e_bool_t islocal, isonchip;
 	unsigned CoreID;
-	int status = EPI_OK;
+	int status = E_OK;
 
 
 	insection = e_false;
@@ -67,7 +67,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 	if (srecStream == NULL)
 	{
 		fprintf(fd, "Error: Can't open SREC file: %s\n", executable);
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	rewind(srecStream);
@@ -89,7 +89,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 			{
 				fprintf(fd, "Error: Invalid record format in SREC file line ");
 				fprintf(fd, "%d: \"%s\"\n", lineN, buf);
-				return EPI_ERR;
+				return E_ERR;
 			}
 
 			if (buf[1] == '0')
@@ -100,7 +100,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 				{
 					fprintf(fd, "Error: S0 record found inside a section in SREC file line ");
 					fprintf(fd, "%d: \"%s\"\n", lineN, buf);
-					status = EPI_WARN;
+					status = E_WARN;
 					continue; // TODO: bail out with error code
 				} else {
 					insection = e_true;
@@ -113,7 +113,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 				{
 					fprintf(fd, "Error: S3 record found outside of a section in SREC file line ");
 					fprintf(fd, "%d: \"%s\"\n", lineN, buf);
-					status = EPI_WARN;
+					status = E_WARN;
 					continue; // TODO: bail out with error code
 				}
 			} else if (buf[1] == '7')
@@ -124,7 +124,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 				{
 					fprintf(fd, "Error: S7 record found outside of a section in SREC file line ");
 					fprintf(fd, "%d: \"%s\"\n", lineN, buf);
-					status = EPI_WARN;
+					status = E_WARN;
 					continue; // TODO: bail out with error code
 				} else {
 					insection = e_false;
@@ -133,7 +133,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 			{
 				fprintf(fd, "Error: Invalid record types (valid types are S0, S3 and S7) in SREC file line ");
 				fprintf(fd, "%d: \"%s\"\n", lineN, buf);
-				status = EPI_WARN;
+				status = E_WARN;
 				continue; // TODO: bail out with error code
 			}
 
@@ -153,7 +153,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 			} else {
 				fprintf(fd, "Error: Wrong record format in SREC file line ");
 				fprintf(fd, "%d: \"%s\"\n", lineN, buf);
-				status = EPI_WARN;
+				status = E_WARN;
 				continue;
 			}
 
@@ -275,7 +275,7 @@ int ee_process_SREC(char *executable, e_epiphany_t *pEpiphany, e_mem_t *pEMEM, i
 				{
 					fprintf(fd, "Warning: non zero _start address. The start of program is detected in the address ");
 					fprintf(fd, "%x\n", (unsigned int) startOfProrgram);
-					status = EPI_WARN;
+					status = E_WARN;
 				}
 			}
 			lineN++;

@@ -57,7 +57,7 @@ int e_load_group(char *executable, e_epiphany_t *dev, unsigned row, unsigned col
 	int    irow, icol;
 	int    status;
 
-	status = EPI_OK;
+	status = E_OK;
 
 	pemem = &emem;
 
@@ -75,10 +75,10 @@ int e_load_group(char *executable, e_epiphany_t *dev, unsigned row, unsigned col
 
 			for (irow=row; irow<(row+rows); irow++)
 				for (icol=col; icol<(col+cols); icol++)
-					if (ee_process_SREC(executable, dev, pemem, irow, icol) == EPI_ERR)
+					if (ee_process_SREC(executable, dev, pemem, irow, icol) == E_ERR)
 					{
 						fprintf(fd, "ERROR: Can't parse SREC file.\n");
-						return EPI_ERR;
+						return E_ERR;
 					}
 
 			for (irow=row; irow<(row+rows); irow++)
@@ -98,7 +98,7 @@ int e_load_group(char *executable, e_epiphany_t *dev, unsigned row, unsigned col
 	else
 	{
 		fprintf(fd, "ERROR: Can't connect to Epiphany or external memory.\n");
-		return EPI_ERR;
+		return E_ERR;
 	}
 
 	diag(L_D1) { fprintf(fd, "e_load_group(): leaving loader.\n"); }

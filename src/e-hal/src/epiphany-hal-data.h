@@ -52,54 +52,71 @@ typedef enum {
 
 
 typedef enum {
-	EPI_OK   =  0,
-	EPI_ERR  = -1,
-	EPI_WARN = -2,
+	E_OK   =  0,
+	E_ERR  = -1,
+	E_WARN = -2,
 } e_return_stat_t;
 
 
-// Core Registers
-#define EPI_CORE_REG_BASE   0xf0000
-#define EPI_CONFIG          (EPI_CORE_REG_BASE + 0x0400)
-#define EPI_STATUS          (EPI_CORE_REG_BASE + 0x0404)
-#define EPI_PC              (EPI_CORE_REG_BASE + 0x0408)
-#define EPI_IRET            (EPI_CORE_REG_BASE + 0x0420)
-#define EPI_IMASK           (EPI_CORE_REG_BASE + 0x0424)
-#define EPI_ILAT            (EPI_CORE_REG_BASE + 0x0428)
-#define EPI_ILATST          (EPI_CORE_REG_BASE + 0x042C)
-#define EPI_ILATCL          (EPI_CORE_REG_BASE + 0x0430)
-#define EPI_IPEND           (EPI_CORE_REG_BASE + 0x0434)
-#define EPI_HWSTATUS        (EPI_CORE_REG_BASE + 0x0444)
-#define EPI_DEBUGCMD        (EPI_CORE_REG_BASE + 0x0448)
-#define EPI_COREID          (EPI_CORE_REG_BASE + 0x0704)
-#define EPI_CORE_RESET      (EPI_CORE_REG_BASE + 0x070c)
-#define EPI_CMESH_ROUTE     (EPI_CORE_REG_BASE + 0x0710)
-#define EPI_XMESH_ROUTE     (EPI_CORE_REG_BASE + 0x0714)
-#define EPI_RDMESH_ROUTE    (EPI_CORE_REG_BASE + 0x0718)
+// eCore registers
+typedef enum {
+	E_CORE_REG_BASE = 0xf0000,
+	E_CONFIG        = E_CORE_REG_BASE + 0x0400,
+	E_STATUS        = E_CORE_REG_BASE + 0x0404,
+	E_PC            = E_CORE_REG_BASE + 0x0408,
+	E_IRET          = E_CORE_REG_BASE + 0x0420,
+	E_IMASK         = E_CORE_REG_BASE + 0x0424,
+	E_ILAT          = E_CORE_REG_BASE + 0x0428,
+	E_ILATST        = E_CORE_REG_BASE + 0x042C,
+	E_ILATCL        = E_CORE_REG_BASE + 0x0430,
+	E_IPEND         = E_CORE_REG_BASE + 0x0434,
+	E_CTIMER0       = E_CORE_REG_BASE + 0x0438,
+	E_CTIMER1       = E_CORE_REG_BASE + 0x043C,
+	E_FSTATUS       = E_CORE_REG_BASE + 0x0440,
+	E_HWSTATUS      = E_CORE_REG_BASE + 0x0444,
+	E_DEBUGCMD      = E_CORE_REG_BASE + 0x0448,
+	E_DMA0CONFIG    = E_CORE_REG_BASE + 0x0500,
+	E_DMA0STRIDE    = E_CORE_REG_BASE + 0x0504,
+	E_DMA0COUNT     = E_CORE_REG_BASE + 0x0508,
+	E_DMA0SRCADDR   = E_CORE_REG_BASE + 0x050C,
+	E_DMA0DSTADDR   = E_CORE_REG_BASE + 0x0510,
+	E_DMA0AUTODMA0  = E_CORE_REG_BASE + 0x0514,
+	E_DMA0AUTODMA1  = E_CORE_REG_BASE + 0x0518,
+	E_DMA0STATUS    = E_CORE_REG_BASE + 0x051C,
+	E_DMA1CONFIG    = E_CORE_REG_BASE + 0x0520,
+	E_DMA1STRIDE    = E_CORE_REG_BASE + 0x0524,
+	E_DMA1COUNT     = E_CORE_REG_BASE + 0x0528,
+	E_DMA1SRCADDR   = E_CORE_REG_BASE + 0x052C,
+	E_DMA1DSTADDR   = E_CORE_REG_BASE + 0x0530,
+	E_DMA1AUTODMA0  = E_CORE_REG_BASE + 0x0534,
+	E_DMA1AUTODMA1  = E_CORE_REG_BASE + 0x0538,
+	E_DMA1STATUS    = E_CORE_REG_BASE + 0x053C,
+	E_COREID        = E_CORE_REG_BASE + 0x0704,
+	E_CORE_RESET    = E_CORE_REG_BASE + 0x070c,
+} e_core_regs_t;
+
 
 // Chip registers
-#define EPI_CHIP_REG_BASE   0xf0000
-#define EPI_IO_TX_CFG       (EPI_CHIP_REG_BASE + 0x0300)
-#define EPI_IO_TX_IO        (EPI_CHIP_REG_BASE + 0x0304)
-#define EPI_IO_RX_IO        (EPI_CHIP_REG_BASE + 0x0308)
-#define EPI_IO_GPIO_IO      (EPI_CHIP_REG_BASE + 0x030c)
-#define EPI_IO_DFT_MON      (EPI_CHIP_REG_BASE + 0x0318)
-#define EPI_IO_SYNC         (EPI_CHIP_REG_BASE + 0x031c)
-#define EPI_IO_HALT         (EPI_CHIP_REG_BASE + 0x0320)
-#define EPI_IO_RESET        (EPI_CHIP_REG_BASE + 0x0324)
-#define EPI_IO_BYPASS_CFG   (EPI_CHIP_REG_BASE + 0x0328)
-#define EPI_IO_SPI_TX_CFG   (EPI_CHIP_REG_BASE + 0x032c)
-#define EPI_IO_SPI_RX_CFG   (EPI_CHIP_REG_BASE + 0x0330)
+typedef enum {
+	E_CHIP_REG_BASE = 0xf0000,
+	E_IO_LINK_CFG   = E_CHIP_REG_BASE + 0x0300,
+	E_IO_TX_CFG     = E_CHIP_REG_BASE + 0x0304,
+	E_IO_RX_CFG     = E_CHIP_REG_BASE + 0x0308,
+	E_IO_FLAG_CFG   = E_CHIP_REG_BASE + 0x030c,
+	E_IO_RESET      = E_CHIP_REG_BASE + 0x0324,
+} e_chip_regs_t;
+
 
 // Epiphany system registers
-#define EPI_SYS_REG_BASE    0x00000000
-#define ESYS_CONFIG         (EPI_SYS_REG_BASE + 0x0000)
-#define ESYS_RESET          (EPI_SYS_REG_BASE + 0x0004)
-#define ESYS_VERSION        (EPI_SYS_REG_BASE + 0x0008)
-#define ESYS_FILTERL        (EPI_SYS_REG_BASE + 0x000c)
-#define ESYS_FILTERH        (EPI_SYS_REG_BASE + 0x0010)
-#define ESYS_FILTERC        (EPI_SYS_REG_BASE + 0x0014)
-#define ESYS_TIMEOUT        (EPI_SYS_REG_BASE + 0x0018)
+typedef enum {
+	E_SYS_REG_BASE  = 0x00000000,
+	E_SYS_CONFIG    = E_SYS_REG_BASE + 0x0000,
+	E_SYS_RESET     = E_SYS_REG_BASE + 0x0004,
+	E_SYS_VERSION   = E_SYS_REG_BASE + 0x0008,
+	E_SYS_FILTERL   = E_SYS_REG_BASE + 0x000c,
+	E_SYS_FILTERH   = E_SYS_REG_BASE + 0x0010,
+	E_SYS_FILTERC   = E_SYS_REG_BASE + 0x0014,
+} e_sys_regs_t;
 
 
 // Core group data structures
